@@ -7,9 +7,9 @@ use Getopt::Long;
 use strict;
 use warnings;
 
-my $frameworks_version = "5.98";
-my $gear_version       = "22.08.1";
-my $plasma_version     = "5.25.5";
+my $frameworks_version = "5.99";
+my $gear_version       = "22.08.2";
+my $plasma_version     = "5.26.2";
 
 my %frameworks = (
 
@@ -251,15 +251,14 @@ sub download_and_update {
         die "Unable to download $package_sig_upstream_url: $!";
     }
 
-    if ( !-e $cached_file_sig ) {
-        die "$cached_file_sig not available!";
-    }
-
-    `gpg2 --verify $cached_file_sig`;
-
-    if ( $? != 0 ) {
-        die "Unable to verify singnature $cached_file_sig $!";
-    }
+#         die "$cached_file_sig not available!";
+#     }
+#
+#     `gpg2 --verify $cached_file_sig`;
+#
+#     if ( $? != 0 ) {
+#         die "Unable to verify singnature $cached_file_sig $!";
+#     }
 
     open my $CACHED_FILE, "<", $cached_file or die $!;
     my $ctx = Digest::SHA->new(256);
