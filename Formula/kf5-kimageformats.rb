@@ -22,6 +22,8 @@ class Kf5Kimageformats < Formula
     system "cmake", "--install", "build"
     prefix.install "build/install_manifest.txt"
   end
+  
+  patch :DATA
 
   def caveats
     <<~EOS
@@ -35,3 +37,44 @@ class Kf5Kimageformats < Formula
     assert_predicate share/"kservices5/qimageioplugins/eps.desktop", :exist?
   end
 end
+
+__END__
+diff --git a/src/imageformats/avif.cpp b/src/imageformats/avif.cpp
+index ccb4c56..1f5789b 100644
+--- a/src/imageformats/avif.cpp
++++ b/src/imageformats/avif.cpp
+@@ -351,12 +351,12 @@ bool QAVIFHandler::decode_one_frame()
+     rgb.rowBytes = result.bytesPerLine();
+     rgb.pixels = result.bits();
+ 
+-#if AVIF_VERSION >= 100101
+-    // use faster decoding for animations
+-    avifResult res = avifImageYUVToRGB(m_decoder->image, &rgb, (m_decoder->imageCount > 1) ? AVIF_CHROMA_UPSAMPLING_NEAREST : AVIF_YUV_TO_RGB_DEFAULT);
+-#else
++// #if AVIF_VERSION >= 100101
++//     // use faster decoding for animations
++//     avifResult res = avifImageYUVToRGB(m_decoder->image, &rgb, (m_decoder->imageCount > 1) ? AVIF_CHROMA_UPSAMPLING_NEAREST : AVIF_YUV_TO_RGB_DEFAULT);
++// #else
+     avifResult res = avifImageYUVToRGB(m_decoder->image, &rgb);
+-#endif
++// #endif
+     if (res != AVIF_RESULT_OK) {
+         qWarning("ERROR in avifImageYUVToRGB: %s", avifResultToString(res));
+         return false;
+@@ -782,11 +782,11 @@ bool QAVIFHandler::write(const QImage &image)
+             }
+         }
+ 
+-#if AVIF_VERSION >= 100101
+-        res = avifImageRGBToYUV(avif, &rgb, AVIF_RGB_TO_YUV_DEFAULT);
+-#else
++// #if AVIF_VERSION >= 100101
++//         res = avifImageRGBToYUV(avif, &rgb, AVIF_RGB_TO_YUV_DEFAULT);
++// #else
+         res = avifImageRGBToYUV(avif, &rgb);
+-#endif
++// #endif
+         if (res != AVIF_RESULT_OK) {
+             qWarning("ERROR in avifImageRGBToYUV: %s", avifResultToString(res));
+             return false;
+
