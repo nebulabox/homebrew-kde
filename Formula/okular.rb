@@ -8,7 +8,7 @@ class Okular < Formula
   head "https://invent.kde.org/graphics/okular.git", branch: "master"
 
   # isn't packaged on ARM64 macOS
-  depends_on "chmlib" => :build if OS.mac? && Hardware::CPU.intel?
+  depends_on "chmlib"
   depends_on "cmake" => [:build, :test]
   depends_on "ebook-tools" => :build
   depends_on "extra-cmake-modules" => [:build, :test]
@@ -36,7 +36,7 @@ class Okular < Formula
   patch :DATA
 
   def install
-    system "cmake", *kde_cmake_args
+    system "cmake", *kde_cmake_args, "-DFORCE_NOT_REQUIRED_DEPENDENCIES='KF5Purpose;QMobipocket'"
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
     prefix.install "build/install_manifest.txt"
